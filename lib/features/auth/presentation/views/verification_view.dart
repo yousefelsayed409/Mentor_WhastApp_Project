@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; 
 import 'package:mentorwhatsapp/core/utils/app_color.dart';
 import 'package:mentorwhatsapp/core/utils/app_styles.dart';
 import 'package:mentorwhatsapp/core/widget/custom_icon_button.dart';
@@ -50,11 +51,11 @@ class _VerificationViewState extends State<VerificationView> {
           }
         },
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding:  EdgeInsets.symmetric(horizontal: 20.h),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding:  EdgeInsets.symmetric(horizontal: 10.h),
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -74,7 +75,7 @@ class _VerificationViewState extends State<VerificationView> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 80),
+                padding:  EdgeInsets.symmetric(horizontal: 80.h),
                 child: BlocBuilder<OtpCubit, OtpState>(
                   builder: (context, state) {
                     return CustomTextField(
@@ -99,11 +100,11 @@ class _VerificationViewState extends State<VerificationView> {
                 'Enter 6-digit code',
                 style: AppStyles.textStyle13,
               ),
-              const SizedBox(height: 30),
+               SizedBox(height: 30.h),
               Row(
                 children: [
                   Icon(Icons.message, color: AppColors.greenDark),
-                  const SizedBox(width: 20),
+                   SizedBox(width: 20.w),
                   Text(
                     'Resend SMS',
                     style: AppStyles.textStyle13,
@@ -115,16 +116,7 @@ class _VerificationViewState extends State<VerificationView> {
                 color: AppColors.greyLight,
               ),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  Icon(Icons.phone, color: AppColors.greyDark),
-                  const SizedBox(width: 20),
-                  Text(
-                    'Call Me',
-                    style: AppStyles.textStyle13,
-                  ),
-                ],
-              ),
+              
             ],
           ),
         ),
