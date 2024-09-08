@@ -189,9 +189,7 @@ class _LoginViewState extends State<LoginView> {
                   'Carrier charges may apply',
                   style: AppStyles.textStyle13,
                 ),  
-                SizedBox(
-                  height: MediaQuery.sizeOf(context).height * 0.4,
-                ),
+               
               ],
             ),
           );
