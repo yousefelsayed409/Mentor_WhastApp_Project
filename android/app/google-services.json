@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "928369675329",
+    "project_id": "whats-app-project-a71e5",
+    "storage_bucket": "whats-app-project-a71e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928369675329:android:96c5505cff4cecf7e60ac0",
+        "android_client_info": {
+          "package_name": "com.example.mentorwhatsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFovn0ZDyqiHhUmuceZ8MPKgU8qbj6RfI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
