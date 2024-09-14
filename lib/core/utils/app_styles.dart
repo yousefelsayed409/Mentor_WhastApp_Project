@@ -13,10 +13,10 @@ abstract class AppStyles {
     fontWeight: FontWeight.bold,
     color: AppColors.black,
   );
-  static final textStyle36 = TextStyle(
-    fontSize: 36.sp,
+  static final textStyl16 = TextStyle(
+    fontSize: 16.sp,
     fontWeight: FontWeight.bold,
-    color: AppColors.black,
+    color: AppColors.white,
   );
 
   static final textStyle15 = TextStyle(

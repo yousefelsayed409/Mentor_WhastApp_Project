@@ -103,7 +103,7 @@ class _VerificationViewState extends State<VerificationView> {
                SizedBox(height: 30.h),
               Row(
                 children: [
-                  Icon(Icons.message, color: AppColors.greenDark),
+                  const Icon(Icons.message, color: AppColors.greenDark),
                    SizedBox(width: 20.w),
                   Text(
                     'Resend SMS',
@@ -112,7 +112,7 @@ class _VerificationViewState extends State<VerificationView> {
                 ],
               ),
               const SizedBox(height: 10),
-              Divider(
+              const Divider(
                 color: AppColors.greyLight,
               ),
               const SizedBox(height: 10),

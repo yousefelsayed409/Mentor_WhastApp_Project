@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mentorwhatsapp/features/auth/presentation/views/login_view.dart';
+import 'package:mentorwhatsapp/features/auth/presentation/views/profile_view.dart';
+import 'package:mentorwhatsapp/features/home/presentation/view/home_view.dart';
 import 'package:mentorwhatsapp/features/splash/view/splash_view.dart';
 
 class AppRoute {
   static const splashView = 'SplashView';
   static const loginview = 'LoginView';
+    static const profileScreen = 'ProfileScreen';
+        static const homeView = 'HomeView';
+
+
 
   static Route generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -12,6 +18,10 @@ class AppRoute {
         return SizeTransition3(const SplashView());
       case loginview:
         return SizeTransition3(  const LoginView(),);
+          case profileScreen:
+        return SizeTransition3(  const ProfileScreen(),);
+           case homeView:
+        return SizeTransition3(   HomeView(),);
     }
     return undefinedRoute();
   }

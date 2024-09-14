@@ -4,8 +4,12 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mentorwhatsapp/core/utils/app_color.dart';
 import 'package:mentorwhatsapp/core/utils/app_styles.dart';
+import 'package:mentorwhatsapp/core/widget/csutom_navigat.dart';
 import 'package:mentorwhatsapp/core/widget/custom_eleveted_button.dart';
 import 'package:mentorwhatsapp/features/auth/presentation/views/verification_view.dart';
+import 'package:mentorwhatsapp/features/auth/presentation/views/profile_view.dart';
+import 'package:mentorwhatsapp/features/home/presentation/view/home_view.dart';
+import 'package:mentorwhatsapp/features/splash/view/splash_view.dart';
 import '../manger/auth_cubit/cubit/otp_cubit.dart';
 import '../manger/auth_cubit/cubit/otp_state.dart';
 import '../../../../core/widget/custom_icon_button.dart';
@@ -201,9 +205,7 @@ class _LoginViewState extends State<LoginView> {
           if (keyform.currentState!.validate()) {
             final phoneNumber = '+${countryCodeController.text}${phoneNumberController.text}';
             otpCubit.sendOtp(phoneNumber); 
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return const VerificationView();
-            }));
+          NavigationHelper.navigateTo(context, HomeView());
           }
         },
         text: 'Next',
