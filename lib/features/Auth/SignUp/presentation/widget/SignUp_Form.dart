@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mentorwhatsapp/core/services/app_services.dart';
+import 'package:mentorwhatsapp/core/widget/aweson_dialg.dart';
 import 'package:mentorwhatsapp/features/Auth/SignIn/presentation/Views/SignIn_screen.dart';
 import 'package:mentorwhatsapp/features/Auth/SignUp/presentation/SignUp_Cubit/signup_cubit.dart';
 import 'package:mentorwhatsapp/core/utils/app_color.dart';
@@ -11,6 +12,7 @@ import 'package:mentorwhatsapp/core/utils/app_styles.dart';
 import 'package:mentorwhatsapp/core/widget/csutom_navigat.dart';
 import 'package:mentorwhatsapp/core/widget/custom_eleveted_button.dart';
 import 'package:mentorwhatsapp/core/widget/toast.dart';
+import 'package:delightful_toast/delight_toast.dart';
 
 import 'Form_Field.dart';
 import 'TermsAndCondition.dart';
@@ -25,32 +27,32 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final keyForm = GlobalKey<FormState>();
-  File? selectedImage; // الصورة المختارة
-
+  File? selectedImage; 
   
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SignupCubit, SignupState>(
       listener: (context, state) async {
-        if (state is SignupSuccessState) {
-          if (selectedImage != null) {
-            final uploadService = AppService();
-            String? imageUrl = await uploadService.uploadImageUser(
-              file: selectedImage!,
-              uid: state.uid, 
-            );
-            if (imageUrl != null) {
-              print('تم رفع الصورة بنجاح: $imageUrl');
-            }
-          }
+  if (state is SignupSuccessState) {
+    if (selectedImage != null) {
+      final uploadService = AppService();
+      String? imageUrl = await uploadService.uploadImageUser(
+        file: selectedImage!,
+        uid: state.uid, 
+      );
+      if (imageUrl != null) {
+        print('تم رفع الصورة بنجاح: $imageUrl');
+      }
+    }
 
-          toastMsg('SuccessFully');
-          NavigationHelper.navigateReplacement(context, SignInview());
-        } else if (state is SignupFailureState) {
-          toastMsg(state.errorMessage);
-        }
-      },
+toastMsg('Success SignUp');
+
+    NavigationHelper.navigateReplacement(context, SignInview());
+  } else if (state is SignupFailureState) {
+    toastMsg(state.errorMessage);
+  }
+},
       builder: (context, state) {
         final cubit = BlocProvider.of<SignupCubit>(context);
         return Padding(

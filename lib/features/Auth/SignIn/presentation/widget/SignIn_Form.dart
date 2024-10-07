@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mentorwhatsapp/core/widget/toast.dart';
 import 'package:mentorwhatsapp/features/Auth/SignIn/presentation/SignIn_Cubit/cubit/sign_in_cubit.dart';
 import 'package:mentorwhatsapp/features/Auth/SignIn/presentation/widget/signin_header_text.dart';
 import 'package:mentorwhatsapp/features/Auth/forgot_Password/presentation/views/Foregot_Password_View.dart';
@@ -28,6 +29,7 @@ class SigninForm extends StatelessWidget {
     return BlocConsumer<SignInCubit, SignInState>(
       listener: (context, state) {
         if (state is SignInSuccessState) {
+toastMsg('Success Login');
           NavigationHelper.navigateReplacement(context , HomeView());
           // CustomNavigatePushReplace(context, '/homeNavBar');
           // FirebaseAuth.instance.currentUser!.emailVerified
