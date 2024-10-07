@@ -1,5 +1,4 @@
-import 'dart:io'; // لاستيراد File
-
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +9,7 @@ import 'package:mentorwhatsapp/features/home/data/model/message.dart';
 import 'package:mentorwhatsapp/features/home/presentation/manger/cubit/chat_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart'; // استيراد حزمة الإيموجي
 
 class ChatScreen extends StatefulWidget {
   final String userId;
@@ -26,7 +26,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   late final String currentUserId;
   final ScrollController _scrollController = ScrollController();
-  final AppService appService = AppService(); 
+  final AppService appService = AppService();
+  bool _showEmojiPicker = false; // متغير للتحكم في ظهور الإيموجي
 
   @override
   void initState() {
@@ -63,6 +64,13 @@ class _ChatScreenState extends State<ChatScreen> {
         BlocProvider.of<ChatCubit>(context).sendMessage(chatId, imageMessage);
       }
     }
+  }
+
+  void _onEmojiSelected(String emoji) {
+    _controller.text += emoji; 
+    setState(() {
+      _showEmojiPicker = false; 
+    });
   }
 
   @override
@@ -158,6 +166,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
+              if (_showEmojiPicker) 
+                EmojiPicker(
+                  onEmojiSelected: (category, emoji) {
+                    _onEmojiSelected(emoji.emoji);
+                  },
+                ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -165,6 +179,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     IconButton(
                       icon: const Icon(Icons.image),
                       onPressed: () => _sendImage(chatId), 
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.emoji_emotions),
+                      onPressed: () {
+                        setState(() {
+                          _showEmojiPicker = !_showEmojiPicker; 
+                        });
+                      },
                     ),
                     Expanded(
                       child: TextField(
