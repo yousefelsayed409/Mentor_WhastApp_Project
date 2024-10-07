@@ -15,7 +15,7 @@ class AppColors {
   static const Color greyLight = Color(0xFF667781);
   static const Color backgroundDark = Color(0xFF111B21);
   static const Color backgroundLight = Color(0xFFFFFFFF);
-  static const Color greyBackground = Color(0xFF202C33);
+  static const Color greyBackground = Color(0xFF21282B);
    static Color primaryColor = Color(0xffF9F4FA);
   static Color offWhite = const Color(0xffF8F4F9);
   static Color deepBrown = const Color(0xff6B4B3E);
@@ -25,6 +25,8 @@ class AppColors {
   static Color btncolor = const Color(0xffC49E85);
   static Color kprimerycolorthree = Color(0xffE6F7FF);
 static Color kprimercolortow = Color(0xff015E53);
+static Color primercolortow = Color(0xff015E53);
+
 
 
 

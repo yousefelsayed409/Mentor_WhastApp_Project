@@ -5,11 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mentorwhatsapp/core/services/app_services.dart';
+import 'package:mentorwhatsapp/core/utils/app_color.dart';
 import 'package:mentorwhatsapp/features/home/data/model/message.dart';
 import 'package:mentorwhatsapp/features/home/presentation/manger/cubit/chat_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart'; // استيراد حزمة الإيموجي
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
 class ChatScreen extends StatefulWidget {
   final String userId;
@@ -27,7 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late final String currentUserId;
   final ScrollController _scrollController = ScrollController();
   final AppService appService = AppService();
-  bool _showEmojiPicker = false; // متغير للتحكم في ظهور الإيموجي
+  bool _showEmojiPicker = false;
 
   @override
   void initState() {
@@ -67,9 +68,15 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _onEmojiSelected(String emoji) {
-    _controller.text += emoji; 
+    _controller.text += emoji;
     setState(() {
-      _showEmojiPicker = false; 
+      _showEmojiPicker = false;
+    });
+  }
+
+  void _toggleEmojiPicker() {
+    setState(() {
+      _showEmojiPicker = !_showEmojiPicker;
     });
   }
 
@@ -82,143 +89,132 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.userName)),
-      body: BlocBuilder<ChatCubit, ChatState>(
-        builder: (context, state) {
-          if (state is ChatLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ChatError) {
-            return Center(child: Text('حدث خطأ: ${state.error}'));
+      body: GestureDetector(
+        onTap: () {
+          if (_showEmojiPicker) {
+            setState(() {
+              _showEmojiPicker = false;
+            });
           }
+        },
+        child: BlocBuilder<ChatCubit, ChatState>(
+          builder: (context, state) {
+            if (state is ChatLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ChatError) {
+              return Center(child: Text('حدث خطأ: ${state.error}'));
+            }
 
-          return Column(
-            children: [
-              Expanded(
-                child: StreamBuilder<List<Message>>(
-                  stream: chatCubit.getMessages(chatId),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+            return Column(
+              children: [
+                Expanded(
+                  child: StreamBuilder<List<Message>>(
+                    stream: chatCubit.getMessages(chatId),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text('حدث خطأ أثناء تحميل الرسائل.'));
-                    }
+                      if (snapshot.hasError) {
+                        return const Center(child: Text('حدث خطأ أثناء تحميل الرسائل.'));
+                      }
 
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('لا توجد رسائل بعد.'));
-                    }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('لا توجد رسائل بعد.'));
+                      }
 
-                    WidgetsBinding.instance.addPostFrameCallback(
-                        (_) => _scrollToBottom());     
+                      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());     
 
-                    return ListView.builder(
-                      controller: _scrollController,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        final message = snapshot.data![index];
-                        final isMe = message.senderID == currentUserId;
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final message = snapshot.data![index];
+                          final isMe = message.senderID == currentUserId;
 
-                        return ChatBubble(
-                          clipper: isMe
-                              ? ChatBubbleClipper1(type: BubbleType.sendBubble)
-                              : ChatBubbleClipper10(
-                                  type: BubbleType.receiverBubble),
-                          alignment:
-                              isMe ? Alignment.topRight : Alignment.topLeft,
-                          margin: const EdgeInsets.only(top: 10),
-                          backGroundColor:
-                              isMe ? Colors.blue : Colors.grey[200],
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: isMe
-                                  ? CrossAxisAlignment.end
-                                  : CrossAxisAlignment.start,
-                              children: [
-                                if (message.messageType == MessageType.text)
+                          return ChatBubble(
+                            clipper: isMe
+                                ? ChatBubbleClipper1(type: BubbleType.sendBubble)
+                                : ChatBubbleClipper10(type: BubbleType.receiverBubble),
+                            alignment: isMe ? Alignment.topRight : Alignment.topLeft,
+                            margin: const EdgeInsets.only(top: 10),
+                            backGroundColor: isMe ? AppColors.primercolortow : AppColors.greyBackground,
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                children: [
+                                  if (message.messageType == MessageType.text)
+                                    Text(
+                                      message.content,
+                                      style: TextStyle(color: isMe ? Colors.white : Colors.white, fontSize: 16),
+                                    ),
+                                  if (message.messageType == MessageType.image)
+                                    Image.network(message.content, height: 150),
+                                  const SizedBox(height: 4),
                                   Text(
-                                    message.content,
-                                    style: TextStyle(
-                                        color: isMe
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontSize: 16),
+                                    DateFormat('HH:mm').format(message.sendAt),
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                                   ),
-                                if (message.messageType == MessageType.image)
-                                  Image.network(
-                                    message.content,
-                                    height: 150,
-                                  ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  DateFormat('HH:mm')
-                                      .format(message.sendAt),
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.grey),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                if (_showEmojiPicker)
+                  EmojiPicker(
+                    onEmojiSelected: (category, emoji) {
+                      _onEmojiSelected(emoji.emoji);
+                    },
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.image),
+                        onPressed: () => _sendImage(chatId),
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          decoration: const InputDecoration(
+                            labelText: 'أدخل رسالتك...',
+                            border: OutlineInputBorder(),
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              if (_showEmojiPicker) 
-                EmojiPicker(
-                  onEmojiSelected: (category, emoji) {
-                    _onEmojiSelected(emoji.emoji);
-                  },
-                ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.image),
-                      onPressed: () => _sendImage(chatId), 
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.emoji_emotions),
-                      onPressed: () {
-                        setState(() {
-                          _showEmojiPicker = !_showEmojiPicker; 
-                        });
-                      },
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        decoration: const InputDecoration(
-                          labelText: 'أدخل رسالتك...',
-                          border: OutlineInputBorder(),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: () {
-                        if (_controller.text.isNotEmpty) {
-                          final newMessage = Message(
-                            senderID: currentUserId,
-                            messageType: MessageType.text,
-                            sendAt: DateTime.now(),
-                            content: _controller.text,
-                          );
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          if (_controller.text.isNotEmpty) {
+                            final newMessage = Message(
+                              senderID: currentUserId,
+                              messageType: MessageType.text,
+                              sendAt: DateTime.now(),
+                              content: _controller.text,
+                            );
 
-                          chatCubit.sendMessage(chatId, newMessage);
-                          _controller.clear(); 
-                        }
-                      },
-                    ),
-                  ],
+                            chatCubit.sendMessage(chatId, newMessage);
+                            _controller.clear();
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.emoji_emotions),
+                        onPressed: _toggleEmojiPicker,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
