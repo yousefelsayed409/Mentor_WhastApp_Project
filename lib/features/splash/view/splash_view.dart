@@ -1,14 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mentorwhatsapp/core/routes/app_route.dart';
 import 'package:mentorwhatsapp/core/utils/app_assets.dart';
 import 'package:mentorwhatsapp/core/utils/app_color.dart';
 import 'package:mentorwhatsapp/core/utils/app_styles.dart';
+import 'package:mentorwhatsapp/core/widget/csutom_navigat.dart';
+import 'package:mentorwhatsapp/core/widget/custom_eleveted_button.dart';
+import 'package:mentorwhatsapp/features/Auth/SignIn/presentation/Views/SignIn_screen.dart';
+import 'package:mentorwhatsapp/features/home/presentation/view/home_view.dart';
 
-import '../../../core/widget/custom_eleveted_button.dart';
-
-class SplashView extends StatelessWidget {
+class SplashView extends StatefulWidget {
   const SplashView({super.key});
+
+  @override
+  State<SplashView> createState() => _SplashViewState();
+}
+
+class _SplashViewState extends State<SplashView> {
+  @override
+  void initState() {
+    super.initState();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FirebaseAuth.instance.currentUser == null
+        ? Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignInview()))
+        : NavigationHelper.navigateTo(context, HomeView());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +71,7 @@ class SplashView extends StatelessWidget {
                   height: 47.h,
                   text: 'AGREE AND CONTINUE',
                   buttonTextStyle:
-                      AppStyles.textStyle13.copyWith(color: AppColors.black),
+                      AppStyles.textStyle15,
                 ),
               ),
             ],
@@ -63,10 +82,10 @@ class SplashView extends StatelessWidget {
   }
 }
 
- navigateToLoginPage(context) {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoute.loginview,
-      (route) => false,
-    );
-  }
+void navigateToLoginPage(BuildContext context) {
+  Navigator.pushNamedAndRemoveUntil(
+    context,
+    AppRoute.signInView,
+    (route) => false,
+  );
+}

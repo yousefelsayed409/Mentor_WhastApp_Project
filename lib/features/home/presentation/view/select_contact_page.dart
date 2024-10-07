@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mentorwhatsapp/core/utils/app_styles.dart';
 
 class SelectContactPage extends StatelessWidget {
   SelectContactPage({super.key});
@@ -53,10 +54,7 @@ class SelectContactPage extends StatelessWidget {
             ),
             title: Text(
               contact['name'],
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: AppStyles.textStyl16
             ),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(

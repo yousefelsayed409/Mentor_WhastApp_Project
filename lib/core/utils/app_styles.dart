@@ -8,6 +8,18 @@ abstract class AppStyles {
     color: AppColors.black,
    
   );
+  static final poppins400style12 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: AppColors.deepGrey,
+    fontFamily: "Poppins",
+  );
+  static final poppins500style14 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    color: AppColors.white,
+    fontFamily: "Poppins",
+  );
   static final textStyle23 = TextStyle(
     fontSize: 23.sp,
     fontWeight: FontWeight.bold,

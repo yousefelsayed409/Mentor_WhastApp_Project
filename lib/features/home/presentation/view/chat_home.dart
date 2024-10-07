@@ -1,92 +1,66 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mentorwhatsapp/core/utils/app_color.dart';
-import 'package:mentorwhatsapp/core/utils/app_styles.dart';
-import 'package:mentorwhatsapp/core/widget/csutom_navigat.dart';
-
-import 'select_contact_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mentorwhatsapp/features/home/data/model/user_model.dart';
+import 'package:mentorwhatsapp/features/home/presentation/manger/cubit/chat_cubit.dart';
+import 'package:mentorwhatsapp/features/home/presentation/view/chat_screen_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatHome extends StatelessWidget {
-  ChatHome({super.key});
-
-  final List<Map<String, dynamic>> chats = [
-    {
-      'name': 'John Doe',
-      'message': 'Hello! How are you?',
-      'time': '12:30 PM',
-      'avatar': 'assets/images/avatar.png',
-    },
-    {
-      'name': 'Jane Smith',
-      'message': 'See you later!',
-      'time': '11:15 AM',
-      'avatar': 'assets/images/avatar.png',
-    },
-    {
-      'name': 'Michael Johnson',
-      'message': 'I\'ll call you back.',
-      'time': '10:45 AM',
-      'avatar': 'assets/images/avatar.png',
-    },
-    {
-      'name': 'Emily Davis',
-      'message': 'Can we reschedule?',
-      'time': 'Yesterday',
-      'avatar': 'assets/images/avatar.png',
-    },
-    {
-      'name': 'David Wilson',
-      'message': 'Good morning!',
-      'time': 'Yesterday',
-      'avatar': 'assets/images/avatar.png',
-    },
-     {
-      'name': 'David Wilson',
-      'message': 'Good morning!',
-      'time': 'Yesterday',
-      'avatar': 'assets/images/avatar.png',
-    },
-  ];
+  const ChatHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-     
-      body: ListView.builder(
-        itemCount: chats.length,
-        itemBuilder: (context, index) {
-          final chat = chats[index];
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: AssetImage(chat['avatar']), 
-              radius: 25,
-            ),
-            title: Text(
-              chat['name'],
-              style: AppStyles.textStyl16
-            ),
-            subtitle: Text(
-              chat['message'],
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-              maxLines: 1,       
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: Text(
-              chat['time'],
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            onTap: () {
+    return Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('حدث خطأ أثناء جلب المستخدمين.'));
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('لا يوجد مستخدمين.'));
+          }
+
+          List<UserModel> users = snapshot.data!.docs.map((doc) {
+            return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+          }).toList();
+
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              UserModel user = users[index];
+
+              if (user.uid == currentUserId) return Container();
+
+              return Padding(
+                padding: const EdgeInsets.all(4),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(user.pfpURL.isNotEmpty ? user.pfpURL : 'assets/images/avatar.png'), // صورة المستخدم
+                  ),
+                  title: Text(user.name),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BlocProvider(
+                          create: (context) => ChatCubit(),
+                          child: ChatScreen(userId: user.uid, userName: user.name),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
             },
           );
         },
-        
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.green,
-        onPressed: () {
-          NavigationHelper.navigateTo(context, SelectContactPage());
-        },
-        child: const Icon(Icons.chat , ),
       ),
     );
   }

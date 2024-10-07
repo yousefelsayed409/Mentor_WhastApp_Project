@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mentorwhatsapp/core/function/change_state_auth.dart';
+import 'package:mentorwhatsapp/features/Auth/SignIn/presentation/SignIn_Cubit/cubit/sign_in_cubit.dart';
+import 'package:mentorwhatsapp/features/Auth/SignUp/presentation/SignUp_Cubit/signup_cubit.dart';
 import 'package:mentorwhatsapp/core/routes/app_route.dart';
-import 'package:mentorwhatsapp/features/auth/presentation/manger/auth_cubit/cubit/otp_cubit.dart';
 import 'package:mentorwhatsapp/firebase_options.dart';
 
 void main() async {
@@ -11,6 +13,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
 );
+ChangeStateAuth();
   runApp(const MentorWhatsApp());
 }
 
@@ -22,8 +25,15 @@ class MentorWhatsApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => OtpCubit(),
+          
+          create: (context) => SignInCubit(),
         ),
+        BlocProvider(
+          
+          create: (context) => SignupCubit(),
+        ),
+        
+        
         
       ],
       child: ScreenUtilInit(
