@@ -23,6 +23,7 @@ class _SplashViewState extends State<SplashView> {
     super.initState();
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      
       FirebaseAuth.instance.currentUser == null
         ? Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignInview()))
         : NavigationHelper.navigateTo(context, HomeView());

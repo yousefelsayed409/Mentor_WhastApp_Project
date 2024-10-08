@@ -14,6 +14,14 @@ class SignInFailureState extends SignInState {
 
   SignInFailureState({required this.errorMessage});
 }
+
+class UpdateUserProfileSuccessState extends SignInState {}
+
+class UpdateUserProfileFailureState extends SignInState {
+  final String errorMessage;
+
+  UpdateUserProfileFailureState({required this.errorMessage});
+}
 class ForgotpasswordLoadingState extends SignInState {}
 class ForgorpasswordSuccessState extends SignInState {}
 class ForgorpasswordFailureState extends SignInState {
@@ -28,9 +36,3 @@ class SignOutFailureState extends SignInState {
 
   SignOutFailureState({required this.errorMessage});
 }
-
-
-
-
-
-

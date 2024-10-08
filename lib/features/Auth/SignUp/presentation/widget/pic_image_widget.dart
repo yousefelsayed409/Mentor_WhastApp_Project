@@ -27,7 +27,7 @@ class _PickImageWidgetState extends State<PickImageWidget> {
         radius: MediaQuery.of(context).size.width * 0.15,
         backgroundImage: selectedImage != null
             ? FileImage(File(selectedImage!.path))
-            : const AssetImage('assets/images/avatar.png') as ImageProvider,
+            : const AssetImage('assets/images/avatar.png'),
         child: Stack(
           children: [
             Positioned(

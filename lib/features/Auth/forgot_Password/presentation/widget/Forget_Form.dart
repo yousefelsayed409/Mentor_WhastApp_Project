@@ -25,7 +25,7 @@ class ForgotPasswordForm extends StatelessWidget {
       listener: (context, state) {
         if (state is ForgorpasswordSuccessState) {
           toastMsg('Check Your Email To Verfiy');
-          NavigationHelper.navigateReplacement(context , SignInview());
+          NavigationHelper.navigateReplacement(context , const SignInview());
         } else if (state is ForgorpasswordFailureState) {
           toastMsg(state.errorMessage);
         }
@@ -48,7 +48,7 @@ class ForgotPasswordForm extends StatelessWidget {
                   height: 102,
                 ),
                 state is SignInLoadingState
-                    ? CircularProgressIndicator(
+                    ? const CircularProgressIndicator(
                         color: AppColors.green,
                       )
                     :  

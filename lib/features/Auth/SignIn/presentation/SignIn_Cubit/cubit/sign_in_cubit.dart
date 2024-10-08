@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mentorwhatsapp/features/home/data/model/user_model.dart';
 import 'package:meta/meta.dart';
 
@@ -14,7 +12,6 @@ class SignInCubit extends Cubit<SignInState> {
   late String? password;
   final FirebaseFirestore firebase = FirebaseFirestore.instance;
 
-  // تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
   Future<void> signinUserWithEmailAndPassword() async {
     try {
       emit(SignInLoadingState());
@@ -26,8 +23,6 @@ class SignInCubit extends Cubit<SignInState> {
         name: userCredential.user!.displayName ?? email!.split('@')[0],
         pfpURL: userCredential.user!.photoURL ?? '', 
       );
-
-      
 
       emit(SignInSuccessState());
     } on FirebaseAuthException catch (e) {
@@ -41,8 +36,6 @@ class SignInCubit extends Cubit<SignInState> {
     }
   }
 
-  
-  // تسجيل الخروج
   Future<void> signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -52,7 +45,6 @@ class SignInCubit extends Cubit<SignInState> {
     }
   }
 
-  // استعادة كلمة المرور
   Future<void> forgotPasswordWithEmail() async {
     try {
       emit(ForgotpasswordLoadingState());
@@ -63,5 +55,26 @@ class SignInCubit extends Cubit<SignInState> {
     }
   }
 
-  
+  Future<void> updateUserProfile({
+    required String name,
+    String? email,
+    String? password,
+  }) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.updateProfile(displayName: name);
+        if (email != null && email.isNotEmpty) {
+          // ignore: deprecated_member_use
+          await user.updateEmail(email);
+        }
+        if (password != null && password.isNotEmpty) {
+          await user.updatePassword(password);
+        }
+        emit(UpdateUserProfileSuccessState());
+      }
+    } catch (e) {
+      emit(UpdateUserProfileFailureState(errorMessage: e.toString()));
+    }
+  }
 }

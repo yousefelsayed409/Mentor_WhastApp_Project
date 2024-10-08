@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mentorwhatsapp/core/services/app_services.dart';
-import 'package:mentorwhatsapp/core/widget/aweson_dialg.dart';
 import 'package:mentorwhatsapp/features/Auth/SignIn/presentation/Views/SignIn_screen.dart';
 import 'package:mentorwhatsapp/features/Auth/SignUp/presentation/SignUp_Cubit/signup_cubit.dart';
 import 'package:mentorwhatsapp/core/utils/app_color.dart';
@@ -12,11 +11,10 @@ import 'package:mentorwhatsapp/core/utils/app_styles.dart';
 import 'package:mentorwhatsapp/core/widget/csutom_navigat.dart';
 import 'package:mentorwhatsapp/core/widget/custom_eleveted_button.dart';
 import 'package:mentorwhatsapp/core/widget/toast.dart';
-import 'package:delightful_toast/delight_toast.dart';
 
 import 'Form_Field.dart';
 import 'TermsAndCondition.dart';
-import 'pic_image_widget.dart'; // تأكد من استيراد الويدجت الخاصة باختيار الصورة
+import 'pic_image_widget.dart';
 
 class SignUpForm extends StatefulWidget {
   SignUpForm({super.key});

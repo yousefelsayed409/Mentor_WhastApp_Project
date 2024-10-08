@@ -20,6 +20,8 @@ class HomeView extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: false,
+          automaticallyImplyLeading: false,
           title: const Text(
             'WhatsApp',
             style: TextStyle(letterSpacing: 1),
@@ -32,7 +34,7 @@ class HomeView extends StatelessWidget {
                   context.read<SignInCubit>().signOut().then((_) { 
                     toastMsg('Success LogOut');
 
-                    NavigationHelper.navigateReplacement(context, SignInview());
+                    NavigationHelper.navigateReplacement(context, const SignInview());
                   });
                 },
                 icon: Icons.logout),
@@ -58,7 +60,7 @@ class HomeView extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            ChatHome(),
+            const ChatHome(),
             StatusHome(),
             CallPage(),
           ],

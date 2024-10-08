@@ -42,7 +42,7 @@ class ChatHome extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(user.pfpURL.isNotEmpty ? user.pfpURL : 'assets/images/avatar.png'), // صورة المستخدم
+                    backgroundImage: NetworkImage(user.pfpURL.isNotEmpty ? user.pfpURL : 'https://via.placeholder.com/150'), // صورة المستخدم
                   ),
                   title: Text(user.name),
                   onTap: () {
