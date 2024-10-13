@@ -1,83 +1,62 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:mentorwhatsapp/features/home/data/model/user_model.dart';
 import 'package:path/path.dart' as p;
 
 class AppService {
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  CollectionReference? userCollection;
-  UserModel? userModel;
-  // final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  bool _isRecording = false;
 
   Future<XFile?> getImageFromGallery() async {
     final ImagePicker imagePicker = ImagePicker();
-    final XFile? file =
-        await imagePicker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    return image;
+  }
+
+  Future<XFile?> getFileFromGallery() async {
+    final ImagePicker imagePicker = ImagePicker();
+    final XFile? file = await imagePicker.pickVideo(source: ImageSource.gallery); // أو استخدام source: ImageSource.gallery إذا كنت تريد ملفات غير الصور
     return file;
   }
 
   Future<String?> uploadImageUser({required File file, required String uid}) async {
     try {
-      Reference fileRef = firebaseStorage.ref('users/pfps').child("$uid${p.extension(file.path)}");
+      Reference storageRef = firebaseStorage.ref('users/images').child("$uid/${p.basename(file.path)}");
 
-      UploadTask task = fileRef.putFile(file);
+      UploadTask uploadTask = storageRef.putFile(file);
 
-      return task.then((p) {
-        if (p.state == TaskState.success) {
-          return fileRef.getDownloadURL();
-        }
-        return null;
-      });
+      TaskSnapshot snapshot = await uploadTask;
+
+      if (snapshot.state == TaskState.success) {
+        return await storageRef.getDownloadURL();
+      }
+      return null;
     } catch (e) {
       print('حدث خطأ أثناء رفع الصورة: $e');
       return null;
     }
   }
 
-  // Future<String?> startRecording() async {
-  //   try {
-  //     await _recorder.openRecorder();
-  //     String path = '${Directory.current.path}/recording.aac'; // يمكنك تغيير اسم الملف إذا أردت
-  //     await _recorder.startRecorder(toFile: path);
-  //     _isRecording = true;
-  //     return path;
-  //   } catch (e) {
-  //     print('حدث خطأ أثناء بدء التسجيل: $e');
-  //     return null;
-  //   }
-  // }
+  Future<String?> uploadFile({required File file, required String uid}) async {
+    try {
+      Reference fileRef = firebaseStorage.ref('users/files').child("$uid/${p.basename(file.path)}");
 
-  // Future<String?> stopRecording() async {
-  //   try {
-  //     String? path = await _recorder.stopRecorder();
-  //     _isRecording = false;
-  //     await _recorder.closeRecorder();
-  //     return path;
-  //   } catch (e) {
-  //     print('حدث خطأ أثناء إيقاف التسجيل: $e');
-  //     return null;
-  //   }
-  // }
+      UploadTask task = fileRef.putFile(file);
 
-  // Future<String?> uploadAudio({required File audioFile, required String uid}) async {
-  //   try {
-  //     Reference fileRef = firebaseStorage.ref('users/audio').child("$uid/${p.basename(audioFile.path)}");
+      TaskSnapshot snapshot = await task;
 
-  //     UploadTask task = fileRef.putFile(audioFile);
+      if (snapshot.state == TaskState.success) {
+        return await fileRef.getDownloadURL();
+      }
+      return null;
+    } catch (e) {
+      print('حدث خطأ أثناء رفع الملف: $e');
+      return null;
+    }
+  }
 
-  //     return task.then((p) {
-  //       if (p.state == TaskState.success) {
-  //         return fileRef.getDownloadURL();
-  //       }
-  //       return null;
-  //     });
-  //   } catch (e) {
-  //     print('حدث خطأ أثناء رفع الصوت: $e');
-  //     return null;
-  //   }
-  // }
+ Future<bool> isOnline() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    return (connectivityResult != ConnectivityResult.none);
+  }
 }

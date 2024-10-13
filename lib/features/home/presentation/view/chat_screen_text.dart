@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mentorwhatsapp/core/services/app_services.dart';
+import 'package:mentorwhatsapp/core/services/app_services.dart';  
 import 'package:mentorwhatsapp/core/utils/app_color.dart';
 import 'package:mentorwhatsapp/features/home/data/model/message.dart';
 import 'package:mentorwhatsapp/features/home/presentation/manger/cubit/chat_cubit.dart';
@@ -29,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final AppService appService = AppService();
   bool _showEmojiPicker = false;
+  String userStatus = "Offline"; 
 
   @override
   void initState() {
@@ -36,6 +37,18 @@ class _ChatScreenState extends State<ChatScreen> {
     currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
     final chatCubit = BlocProvider.of<ChatCubit>(context);
     chatCubit.createChat(currentUserId, widget.userId);
+    
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .snapshots()
+        .listen((userSnapshot) {
+      if (userSnapshot.exists) {
+        setState(() {
+          userStatus = userSnapshot.data()?['isOnline'] ? "Online" : "Offline"; 
+        });
+      }
+    });
   }
 
   void _scrollToBottom() {
@@ -67,6 +80,25 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<void> _sendFile(String chatId) async {
+    final XFile? pickedFile = await appService.getFileFromGallery();
+    if (pickedFile != null) {
+      final File file = File(pickedFile.path);
+      final fileUrl = await appService.uploadFile(file: file, uid: currentUserId);
+      
+      if (fileUrl != null) {
+        final fileMessage = Message(
+          senderID: currentUserId,
+          messageType: MessageType.file,
+          sendAt: DateTime.now(),
+          content: fileUrl, 
+        );
+
+        BlocProvider.of<ChatCubit>(context).sendMessage(chatId, fileMessage);
+      }
+    }
+  }  
+
   void _onEmojiSelected(String emoji) {
     _controller.text += emoji;
     setState(() {
@@ -88,7 +120,25 @@ class _ChatScreenState extends State<ChatScreen> {
     String chatId = ids.join("_");
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.userName)),
+      appBar: AppBar(title:  Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.userName,
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 5,),
+                      Text(
+                        userStatus,
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: userStatus == "Online" ? Colors.green : Colors.grey, 
+                        ),
+                      ),
+                    ],
+                  ),
+                ),),
       body: GestureDetector(
         onTap: () {
           if (_showEmojiPicker) {
@@ -107,6 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
             return Column(
               children: [
+               
                 Expanded(
                   child: StreamBuilder<List<Message>>(
                     stream: chatCubit.getMessages(chatId),
@@ -150,7 +201,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                       style: TextStyle(color: isMe ? Colors.white : Colors.white, fontSize: 16),
                                     ),
                                   if (message.messageType == MessageType.image)
-                                    Image.network(message.content, height: 150),
+                                    Image.network(message.content, height: 150, fit: BoxFit.fill),
+                                  if (message.messageType == MessageType.file)
+                                    TextButton(
+                                      onPressed: () {
+                                      },
+                                      child: Text('تحميل ملف', style: TextStyle(color: isMe ? Colors.white : Colors.black)),
+                                    ),
                                   const SizedBox(height: 4),
                                   Text(
                                     DateFormat('HH:mm').format(message.sendAt),
@@ -178,6 +235,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       IconButton(
                         icon: const Icon(Icons.image),
                         onPressed: () => _sendImage(chatId),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.attach_file),
+                        onPressed: () => _sendFile(chatId),
                       ),
                       Expanded(
                         child: TextField(

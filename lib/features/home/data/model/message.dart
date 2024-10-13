@@ -1,35 +1,37 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-enum MessageType { text, image, audio } // إضافة نوع الصوت
+enum MessageType { text, image, audio, file } 
 
 class Message {
   final String senderID;
-  final MessageType messageType;
-  final DateTime sendAt;
   final String content;
+  final DateTime sendAt;
+  final MessageType messageType;
+  final String? fileUrl; 
 
   Message({
     required this.senderID,
     required this.messageType,
     required this.sendAt,
     required this.content,
+    this.fileUrl,
   });
-
-  factory Message.fromJson(Map<String, dynamic> json) {
-    return Message(
-      senderID: json['senderID'],
-      messageType: MessageType.values[json['messageType']],
-      sendAt: (json['sendAt'] as Timestamp).toDate(),
-      content: json['content'],
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
       'senderID': senderID,
-      'messageType': messageType.index,
-      'sendAt': sendAt,
       'content': content,
+      'sendAt': sendAt.toIso8601String(),
+      'messageType': messageType.index,
+      'fileUrl': fileUrl,
     };
+  }
+
+  static Message fromJson(Map<String, dynamic> json) {
+    return Message(
+      senderID: json['senderID'],
+      content: json['content'],
+      sendAt: DateTime.parse(json['sendAt']),
+      messageType: MessageType.values[json['messageType']],
+      fileUrl: json['fileUrl'],   
+    );
   }
 }

@@ -18,6 +18,11 @@ class SignInCubit extends Cubit<SignInState> {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email!, password: password!);
 
+      await firebase.collection('users').doc(userCredential.user!.uid).update({
+        'isOnline': true,
+        'lastSeen': FieldValue.serverTimestamp(),
+      });
+
       UserModel userModel = UserModel(
         uid: userCredential.user!.uid,
         name: userCredential.user!.displayName ?? email!.split('@')[0],
@@ -38,6 +43,11 @@ class SignInCubit extends Cubit<SignInState> {
 
   Future<void> signOut() async {
     try {
+      await firebase.collection('users').doc(FirebaseAuth.instance.currentUser?.uid).update({
+        'isOnline': false,
+        'lastSeen': FieldValue.serverTimestamp(),
+      });
+
       await FirebaseAuth.instance.signOut();
       emit(SignOutSuccessState());
     } catch (e) {
@@ -64,13 +74,16 @@ class SignInCubit extends Cubit<SignInState> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await user.updateProfile(displayName: name);
+
         if (email != null && email.isNotEmpty) {
-          // ignore: deprecated_member_use
-          await user.updateEmail(email);
+          await user.verifyBeforeUpdateEmail(email);
+          emit(UpdateUserProfileSuccessState());
         }
+
         if (password != null && password.isNotEmpty) {
           await user.updatePassword(password);
         }
+
         emit(UpdateUserProfileSuccessState());
       }
     } catch (e) {

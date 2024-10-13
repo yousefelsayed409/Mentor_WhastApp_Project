@@ -24,6 +24,7 @@ class SignupCubit extends Cubit<SignupState> {
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email!,
         password: password!,
+        
       );
       String uid = userCredential.user!.uid;
 
@@ -33,6 +34,7 @@ class SignupCubit extends Cubit<SignupState> {
         uid: uid,
         name: name!,
         pfpURL: profilePicURL,
+        
       );
 
       emit(SignupSuccessState(uid));
@@ -71,6 +73,7 @@ class SignupCubit extends Cubit<SignupState> {
           'id': uid,
           'name': name,
           'profilePic': pfpURL, 
+          
         });
       }
     } catch (e) {

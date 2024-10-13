@@ -9,11 +9,11 @@ import 'package:mentorwhatsapp/core/routes/app_route.dart';
 import 'package:mentorwhatsapp/firebase_options.dart';
 
 void main() async {
-   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
-ChangeStateAuth();
+  );
+  ChangeStateAuth();
   runApp(const MentorWhatsApp());
 }
 
@@ -25,23 +25,18 @@ class MentorWhatsApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          
           create: (context) => SignInCubit(),
         ),
         BlocProvider(
-          
           create: (context) => SignupCubit(),
         ),
-        
-        
-        
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) {
-          return  MaterialApp(
+          return MaterialApp(
             theme: ThemeData.dark(),
             debugShowCheckedModeBanner: false,
             initialRoute: AppRoute.splashView,
@@ -49,11 +44,6 @@ class MentorWhatsApp extends StatelessWidget {
           );
         },
       ),
-     
     );
   }
 }
- 
-
-
-  
